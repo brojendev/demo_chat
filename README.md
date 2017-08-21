@@ -10,7 +10,7 @@ node chat.js --host <your-ip>
 
 change chat.component.ts
 
-this.socket = io('http://192.168.1.7:5000') to this.socket = io('<your-ip>');
+this.socket = io('http://192.168.1.7:5000') to this.socket = io('\<your-ip\>');
 
 cd ./client
 
