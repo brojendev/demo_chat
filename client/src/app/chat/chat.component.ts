@@ -1,39 +1,43 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-
-import { ChatService } from '../chat.service';
+import { Component, OnInit } from '@angular/core';
+import * as io from 'socket.io-client';
 
 @Component({
   selector: 'app-chat',
-  template: `
-    <p>
-      REPTILEHAUS NG2 CHAT DEMO
-    </p>
-    <div *ngFor="let message of messages">
-      {{message.text}}
-    </div>
-    <input [(ngModel)]="message"  /><button (click)="sendMessage()">Send</button>  
-  `,
+  templateUrl: './chat.component.html',
+  styleUrls: ['./chat.component.css']
 })
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit {
 
-  messages = [];
-  connection;
-  message;
+  	message = '';
+    conversation = [];
+    socket = null;
+ 
+    constructor(){}
 
-  constructor(private chatService:ChatService) {}
+    ngOnInit() {
+        
+        this.socket = io('http://192.168.1.7:5000');
+        this.socket.on('message', function(data) {
+        	console.log(this.conversation);
+            this.conversation.push(data);
+        }.bind(this));
+    }
+ 
+    send() {
+        this.socket.emit('add-message', {
+            'text': this.message
+        });
+        this.message = '';
+    }
+ 
+    keypressHandler(event) {
+        if (event.keyCode === 13){
+            this.send();
+        }
+    } 
+ 
+    isNewUserAlert(data){
+        return data.userName === '';
+    }
 
-  sendMessage(){
-    this.chatService.sendMessage(this.message);
-    this.message = '';
-  }
-
-  ngOnInit() {
-    this.connection = this.chatService.getMessages().subscribe(message => {
-      this.messages.push(message);
-    })
-  }
-  
-  ngOnDestroy() {
-    this.connection.unsubscribe();
-  }
 }
