@@ -4,7 +4,7 @@ cd ./server
 
 npm install
 
-node chat.js --host <your-ip>
+node chat.js --host \<your-ip\>
 
 ## Install and Run Angular app
 
